@@ -15,63 +15,74 @@ import com.wns.cassdispense.cashmanspringboot.model.DenominationModelList;
 @Service
 public class CashDaoImpl implements CashDao {
 
-	private Map<String, DenominationModel> map = new HashMap<>();
+	private Map<String, DenominationModel> db = new HashMap<>();
 
+	/*
+	 * param cashMadelList
+	 */
 	@Override
 	public void addNotes(DenominationModelList cashMadelList) {
 
 		for (DenominationModel model : cashMadelList.getList()) {
 
-			if (map.containsKey(model.getDenominationValue())) {
+			if (db.containsKey(model.getDenominationValue())) {
 				int prevCount = model.getDenominationValueCount();
 
-				DenominationModel denominationModel = map.get(model.getDenominationValue());
+				DenominationModel denominationModel = db.get(model.getDenominationValue());
 				int newValue = denominationModel.getDenominationValueCount();
 
 				int res = prevCount + newValue;
 
 				denominationModel.setDenominationValueCount(res);
 
-				map.put(model.getDenominationValue(), denominationModel);
+				db.put(model.getDenominationValue(), denominationModel);
 
 			} else {
-				map.put(model.getDenominationValue(), model);
+				db.put(model.getDenominationValue(), model);
 			}
 
 		}
 
 	}
 
+	/*
+	 * param cashMadelList
+	 */
 	@Override
 	public void updateNote(DenominationModelList cashMadelList) {
 		for (DenominationModel model : cashMadelList.getList()) {
 
-			if (map.containsKey(model.getDenominationValue())) {
+			if (db.containsKey(model.getDenominationValue())) {
 				int newValue = model.getDenominationValueCount();
 
-				DenominationModel denominationModel = map.get(model.getDenominationValue());
+				DenominationModel denominationModel = db.get(model.getDenominationValue());
 
 				denominationModel.setDenominationValueCount(newValue);
 
-				map.put(model.getDenominationValue(), denominationModel);
+				db.put(model.getDenominationValue(), denominationModel);
 
 			} else {
-				map.put(model.getDenominationValue(), model);
+				db.put(model.getDenominationValue(), model);
 			}
 
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.wns.cassdispense.cashmanspringboot.dao.CashDao#countNotess()
+	 */
 	@Override
 	public DenominationModelList countNotess() {
 
 		DenominationModelList denominationModelList = new DenominationModelList();
 		List<DenominationModel> list = new ArrayList<>();
 
-		Set<String> keySet = map.keySet();
+		Set<String> keySet = db.keySet();
 
 		for (String key : keySet) {
-			list.add(map.get(key));
+			list.add(db.get(key));
 
 		}
 		denominationModelList.setList(list);

@@ -13,12 +13,25 @@ import com.wns.cassdispense.cashmanspringboot.model.DenominationModel;
 import com.wns.cassdispense.cashmanspringboot.model.DenominationModelList;
 import com.wns.cassdispense.cashmanspringboot.service.CashService;
 
+/**
+ * @author Nagaraj
+ *
+ */
 @Service
 public class CashServiceImpl implements CashService {
 
+	private static final String _50 = "50";
+	private static final String _20 = "20";
 	@Autowired
 	private CashDao cashDao;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.wns.cassdispense.cashmanspringboot.service.CashService#addNotes(com.wns.
+	 * cassdispense.cashmanspringboot.model.DenominationModelList)
+	 */
 	@Override
 	public void addNotes(DenominationModelList list) {
 
@@ -26,6 +39,11 @@ public class CashServiceImpl implements CashService {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.wns.cassdispense.cashmanspringboot.service.CashService#countNotes()
+	 */
 	@Override
 	public DenominationModelList countNotes() {
 
@@ -34,62 +52,68 @@ public class CashServiceImpl implements CashService {
 		return countNotess;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.wns.cassdispense.cashmanspringboot.service.CashService#getcash(int)
+	 */
 	@Override
 	public String getcash(int amount) {
 
 		DenominationModelList countNotess = cashDao.countNotess();
-		String res = cashProcess2(countNotess, amount);
+		String res = cashProcess(countNotess, amount);
 
 		return res;
 	}
 
-	private String cashProcess2(DenominationModelList countNotess, int amount) {
+	private String cashProcess(DenominationModelList countNotess, int amount) {
 		Map<String, Integer> existingCount = new HashMap<>();
 		List<DenominationModel> list = countNotess.getList();
 		int twentycount = 0;
 		int fiftycount = 0;
 
 		for (DenominationModel denominationModel : list) {
-			if (denominationModel.getDenominationValue().equals("20")) {
+			if (denominationModel.getDenominationValue().equals(_20)) {
 				twentycount = denominationModel.getDenominationValueCount();
 
 			}
-			if (denominationModel.getDenominationValue().equals("50")) {
+			if (denominationModel.getDenominationValue().equals(_50)) {
 				fiftycount = denominationModel.getDenominationValueCount();
 
 			}
 
 		}
-		existingCount.put("20", twentycount);
-		existingCount.put("50", fiftycount);
+		existingCount.put(_20, twentycount);
+		existingCount.put(_50, fiftycount);
 
 		Map<String, Integer> result = getmoney(existingCount, amount);
-		DenominationModelList denominationModelList = new DenominationModelList();
 
+		DenominationModelList denominationModelList = new DenominationModelList();
 		List<DenominationModel> updatelist = new ArrayList<>();
 
 		for (DenominationModel denominationModel : list) {
 			DenominationModel model = new DenominationModel();
-			if (denominationModel.getDenominationValue().equals("20")) {
-				model.setDenominationValue("20");
-				model.setDenominationValueCount(result.get("20"));
+			if (denominationModel.getDenominationValue().equals(_20)) {
+				model.setDenominationValue(_20);
+				model.setDenominationValueCount(result.get(_20));
 				updatelist.add(model);
 
 			}
-			if (denominationModel.getDenominationValue().equals("50")) {
-				model.setDenominationValue("50");
-				model.setDenominationValueCount(result.get("50"));
+			if (denominationModel.getDenominationValue().equals(_50)) {
+				model.setDenominationValue(_50);
+				model.setDenominationValueCount(result.get(_50));
 				updatelist.add(model);
 
 			}
 
 		}
-
 		denominationModelList.setList(updatelist);
 
+		// update the backend with latest count
 		cashDao.updateNote(denominationModelList);
-		
-		return "50 Notes are:"+result.get("Count50")+" & 20 Notes are : "+result.get("Count20") + "issued";
+
+		return "50 Notes are:" + result.get("Count50") + " & 20 Notes are : " + result.get("Count20")
+				+ " has been issued";
 
 	}
 
@@ -101,30 +125,30 @@ public class CashServiceImpl implements CashService {
 
 		if (givenAmt >= 50) {
 			double a = (double) amount / (double) 50;
-			if (existingCount.get("50") >= a) {
+			if (existingCount.get(_50) >= a) {
 				totalCount50 = (int) a;
 				givenAmt = (int) ((a - totalCount50) * 50);
-				existingCount.put("50", existingCount.get("50") - totalCount50);
+				existingCount.put(_50, existingCount.get(_50) - totalCount50);
 
 			} else {
 
-				totalCount50 = existingCount.get("50");
+				totalCount50 = existingCount.get(_50);
 				givenAmt = givenAmt - totalCount50 * 50;
-				existingCount.put("50", existingCount.get("50") - totalCount50);
+				existingCount.put(_50, existingCount.get(_50) - totalCount50);
 			}
 
 		}
 
 		if (givenAmt >= 20) {
 			double a = (double) givenAmt / (double) 20;
-			if (existingCount.get("20") >= a) {
+			if (existingCount.get(_20) >= a) {
 				totalCount20 = (int) a;
 				givenAmt = (int) ((a - totalCount20) * 20);
-				existingCount.put("20", existingCount.get("20") - totalCount20);
+				existingCount.put(_20, existingCount.get(_20) - totalCount20);
 			} else {
-				totalCount20 = existingCount.get("20");
+				totalCount20 = existingCount.get(_20);
 				givenAmt = givenAmt - totalCount20 * 20;
-				existingCount.put("20", existingCount.get("20") - totalCount20);
+				existingCount.put(_20, existingCount.get(_20) - totalCount20);
 
 			}
 
