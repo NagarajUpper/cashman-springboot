@@ -1,0 +1,17 @@
+http://localhost:8080/addNotes
+{  
+   "list":[  
+      {  
+         "denominationValue":"50",
+         "denominationValueCount":3
+      },
+      {  
+         "denominationValue":"20",
+         "denominationValueCount":8
+      }
+   ]
+}
+
+http://localhost:8080/balanceNotes
+
+http://localhost:8080/getCash/200
