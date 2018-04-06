@@ -1,0 +1,82 @@
+package com.wns.cassdispense.cashmanspringboot.dao.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+
+import com.wns.cassdispense.cashmanspringboot.dao.CashDao;
+import com.wns.cassdispense.cashmanspringboot.model.DenominationModel;
+import com.wns.cassdispense.cashmanspringboot.model.DenominationModelList;
+
+@Service
+public class CashDaoImpl implements CashDao {
+
+	private Map<String, DenominationModel> map = new HashMap<>();
+
+	@Override
+	public void addNotes(DenominationModelList cashMadelList) {
+
+		for (DenominationModel model : cashMadelList.getList()) {
+
+			if (map.containsKey(model.getDenominationValue())) {
+				int prevCount = model.getDenominationValueCount();
+
+				DenominationModel denominationModel = map.get(model.getDenominationValue());
+				int newValue = denominationModel.getDenominationValueCount();
+
+				int res = prevCount + newValue;
+
+				denominationModel.setDenominationValueCount(res);
+
+				map.put(model.getDenominationValue(), denominationModel);
+
+			} else {
+				map.put(model.getDenominationValue(), model);
+			}
+
+		}
+
+	}
+
+	@Override
+	public void updateNote(DenominationModelList cashMadelList) {
+		for (DenominationModel model : cashMadelList.getList()) {
+
+			if (map.containsKey(model.getDenominationValue())) {
+				int newValue = model.getDenominationValueCount();
+
+				DenominationModel denominationModel = map.get(model.getDenominationValue());
+
+				denominationModel.setDenominationValueCount(newValue);
+
+				map.put(model.getDenominationValue(), denominationModel);
+
+			} else {
+				map.put(model.getDenominationValue(), model);
+			}
+
+		}
+	}
+
+	@Override
+	public DenominationModelList countNotess() {
+
+		DenominationModelList denominationModelList = new DenominationModelList();
+		List<DenominationModel> list = new ArrayList<>();
+
+		Set<String> keySet = map.keySet();
+
+		for (String key : keySet) {
+			list.add(map.get(key));
+
+		}
+		denominationModelList.setList(list);
+
+		return denominationModelList;
+	}
+
+}
