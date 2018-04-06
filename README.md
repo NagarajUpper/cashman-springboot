@@ -21,18 +21,19 @@ Build & Deploy:
  step 5: To deploy the application upload the .war file .
  
  
-EndpPoint & Request:
+EndPoint & Request:
 
 #Add Denominations to DB:(Post Oparation)
 Request:
 http://localhost:8080/addNotes
+
 {  
-   "list":[  
-      {  
+   "list":[
+      {
          "denominationValue":"50",
          "denominationValueCount":100
       },
-      {  
+      {
          "denominationValue":"20",
          "denominationValueCount":100
       }
@@ -69,5 +70,5 @@ http://localhost:8080/getCash/200
 Response:
 50 Notes are: 4 &  20 Notes are:0 has been  issued.
 
-=====================================================================================
+===============================================================================
 
