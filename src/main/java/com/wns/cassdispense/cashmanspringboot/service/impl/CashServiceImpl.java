@@ -153,6 +153,13 @@ public class CashServiceImpl implements CashService {
 			}
 
 		}
+		if(givenAmt!=0) {
+			try {
+				throw new Exception("Can't ptocess given amout pls provide amount multiple or 20's or 50's");
+			} catch (Exception e) {
+			
+			}
+		}
 		existingCount.put("Count20", totalCount20);
 		existingCount.put("Count50", totalCount50);
 
